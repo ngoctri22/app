@@ -14,3 +14,21 @@ init()async{
   Setting.storageLib = new SettingLib();
   await Setting.init('Config');
 }
+List makeTreeItems(List? items, int? length){
+  if(length == null || length <= 1 || items == null){
+    return items??[];
+  }
+  int _l = length;
+  if(items.length < length){
+    _l = items.length;
+  }
+  List _items = [];
+  for(int index = 0; index < (items.length/length).ceil(); index++){
+    int max = (index * _l) + _l;
+    if(max > items.length){
+      max = items.length;
+    }
+    _items.add(items.sublist(index * _l, max));
+  }
+  return _items;
+}

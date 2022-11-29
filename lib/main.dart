@@ -67,6 +67,35 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List itemList=[
+      {
+        'date':'20/11/2022',
+        'content':'The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating ratherthan having to individually change instances of widgets.',
+        'time':'09:00',
+      },
+      {
+        'date':'22/11/2022',
+        'content':'The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating ratherthan having to individually change instances of widgets.',
+        'time':'09:00',
+      }
+      ,
+      {
+        'date':'01/11/2022',
+        'content':'The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating ratherthan having to individually change instances of widgets.',
+        'time':'09:00',
+      },
+      {
+        'date':'02/11/2022',
+        'content':'The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating ratherthan having to individually change instances of widgets.',
+        'time':'09:00',
+      }
+      ,
+      {
+        'date':'24/11/2022',
+        'content':'The Flutter framework has been optimized to make rerunning build methods fast, so that you can just rebuild anything that needs updating ratherthan having to individually change instances of widgets.',
+        'time':'09:00',
+      }
+    ];
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     //
@@ -82,22 +111,8 @@ class _MyHomePageState extends State<MyHomePage> {
       body: GetBuilder<HomeController>(
         init: HomeController(),
         builder: (controller) {
-          return Obx(()=>Column(
-            // Column is also a layout widget. It takes a list of children and
-            // arranges them vertically. By default, it sizes itself to fit its
-            // children horizontally, and tries to be as tall as its parent.
-            //
-            // Invoke "debug painting" (press "p" in the console, choose the
-            // "Toggle Debug Paint" action from the Flutter Inspector in Android
-            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-            // to see the wireframe for each widget.
-            //
-            // Column has various properties to control how it sizes itself and
-            // how it positions its children. Here we use mainAxisAlignment to
-            // center the children vertically; the main axis here is the vertical
-            // axis because Columns are vertical (the cross axis would be
-            // horizontal).
-            mainAxisAlignment: MainAxisAlignment.center,
+          return Obx(()=>ListView(
+            padding: const EdgeInsets.all(10),
             children: <Widget>[
               const Text(
                 'You have pushed the button this many times:',
@@ -110,12 +125,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 return InkWell(
                       onTap: (){
                         element['active']=element['active']==1?0:1;
-                        print('======2===${controller.listItem.value}');
                         controller.update();
                       },
                       child: Container(
-                      padding: EdgeInsets.all(10),
-                      margin: EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
                       child: Text(element['name'], style:  TextStyle(
                         color: Colors.green,
                         decoration:element['active']==0?null: TextDecoration.lineThrough,
@@ -138,7 +152,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       Get.showSnackbar(const GetSnackBar(message: 'Lỗi',));
                     }else{
                       controller.listItem.add({
-                        'name':controller.address.value.trim(),'age':'12','active':0
+                        'date':'22/11/2022',
+                        'name':controller.address.value.trim(),'time':'12:12','active':0
                       });
                     }
                   }else{
@@ -147,7 +162,40 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 tooltip: 'Increment',
                 child: const Icon(Icons.add),
-              ), // This trailing co
+              ), //
+              if(controller.listItem.isNotEmpty)...makeTreeItems(controller.listItem, 2).map<Widget>((e){
+                return Row(
+                  children: e.map<Widget>((item){
+                    return Container(
+                      width: (Get.width-40)/2,
+                    margin: const EdgeInsets.all(5),
+                    color: Colors.amberAccent,
+                    child: Column(
+                      crossAxisAlignment : CrossAxisAlignment.start,
+                      children: [
+                        Text( item['date']),
+                        const SizedBox(height: 10),
+                        Text(item['name'],maxLines: 3,overflow: TextOverflow.ellipsis,),
+                        const SizedBox(height: 10),
+                        Text(item['time']),
+                        Row(
+                          mainAxisAlignment : MainAxisAlignment.spaceBetween,
+                          children: [
+                            InkWell(onTap: (){
+                              controller.listItem.removeWhere((element) => element['name']==item['name']);
+                            },child: const Icon(Icons.delete),),
+                            InkWell(onTap: (){
+                              item['name']='111';
+                              controller.update();
+                            },child: const Icon(Icons.edit),),
+                          ],
+                        )
+                      ],
+                    ),
+                    );
+                  }).toList(),
+                );
+              }).toList()// This trailing co
             ],
           ));
         }
