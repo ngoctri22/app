@@ -157,6 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       });
                     }
                   }else{
+                    // Get.snackbar('Thông báo','Đã xảy ra lỗi');
                     Get.snackbar('Thông báo','Đã xảy ra lỗi');
                   }
                 },
