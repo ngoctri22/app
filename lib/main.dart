@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:untitled/Controller.dart';
 import 'package:untitled/global.dart';
 
 void main(){
@@ -78,41 +79,97 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      body: GetBuilder<HomeController>(
+        init: HomeController(),
+        builder: (controller) {
+          return Obx(()=>Column(
+            // Column is also a layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Text(
+                'You have pushed the button this many times:',
+              ),
+              Text(
+                '$_counter',
+                style: Theme.of(context).textTheme.headline4,
+              ),
+              if (controller.listItem.isNotEmpty)...controller.listItem.map<Widget>((element) {
+                return InkWell(
+                      onTap: (){
+                        element['active']=element['active']==1?0:1;
+                        print('======2===${controller.listItem.value}');
+                        controller.update();
+                      },
+                      child: Container(
+                      padding: EdgeInsets.all(10),
+                      margin: EdgeInsets.all(10),
+                      child: Text(element['name'], style:  TextStyle(
+                        color: Colors.green,
+                        decoration:element['active']==0?null: TextDecoration.lineThrough,
+                        decorationStyle: TextDecorationStyle.wavy,
+                      ),)
+                  ),
+                );
+              }).toList(),
+              TextFormField(
+                initialValue: controller.address.value??'',
+                onChanged: (val){
+                  controller.address.value=val;
+                },
+              ),
+              FloatingActionButton(
+                onPressed: (){
+                  if(controller.address.value != ''){
+                    final bool res = check(controller.listItem, controller.address.value) ?? true;
+                    if(!res){
+                      Get.showSnackbar(const GetSnackBar(message: 'Lỗi',));
+                    }else{
+                      controller.listItem.add({
+                        'name':controller.address.value.trim(),'age':'12','active':0
+                      });
+                    }
+                  }else{
+                    Get.snackbar('Thông báo','Đã xảy ra lỗi');
+                  }
+                },
+                tooltip: 'Increment',
+                child: const Icon(Icons.add),
+              ), // This trailing co
+            ],
+          ));
+        }
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: (){
+          // print(object)
+        },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+  check(List item,String name){
+    for (var element in item) {
+      if(element['name'] != name) {
+        print('----${element['name']}');
+        print('----${name}');
+       continue;
+      }else {
+        return false;
+      }
+    }
   }
 }
